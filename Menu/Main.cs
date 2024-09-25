@@ -3373,80 +3373,14 @@ namespace iiMenu.Menu
         {
             try
             {
-                UnityEngine.Debug.Log("Loading data from GitHub");
-                WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt");
-                WebResponse response = request.GetResponse();
-                Stream data = response.GetResponseStream();
-                string html = "";
-                using (StreamReader sr = new StreamReader(data))
-                {
-                    html = sr.ReadToEnd();
-                }
-                UnityEngine.Debug.Log("Data received");
-                shouldAttemptLoadData = false;
-                string[] Data = html.Split("\n");
-
-                UnityEngine.Debug.Log(Data[0]);
-                if (Data[0] != PluginInfo.Version)
-                {
-                    if (!isBetaTestVersion)
-                    {
-                        UnityEngine.Debug.Log("Version is outdated");
-                        Important.JoinDiscord();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + Data[0] + ".", 10000);
-                    } else
-                    {
-                        UnityEngine.Debug.Log("Version is outdated, but user is on beta");
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + Data[0] + ".", 10000);
-                    }
-                } else
-                {
-                    if (isBetaTestVersion)
-                    {
-                        UnityEngine.Debug.Log("Version is outdated, user is on early build of latest");
-                        Important.JoinDiscord();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + Data[0] + ".", 10000);
-                    }
-                }
-                if (Data[0] == "lockdown")
-                {
-                    UnityEngine.Debug.Log("Version is on lockdown");
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + Data[2], 10000);
-                    bgColorA = Color.red;
-                    bgColorB = Color.red;
-                    Settings.Panic();
-                    lockdown = true;
-                }
-
-                admins.Clear();
-                string[] Data0 = Data[1].Split(",");
-                foreach (string Data1 in Data0)
-                {
-                    string[] Data2 = Data1.Split(";");
-                    admins.Add(Data2[0], Data2[1]);
-                }
-                try
-                {
-                    if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                    {
-                        SetupAdminPanel(admins[PhotonNetwork.LocalPlayer.UserId]);
-                    } else
-                    {
-                        Buttons.buttons[23] = new ButtonInfo[] { };
-                    }
-                } catch { }
-
-                motdTemplate = Data[2];
+               
             }
             catch { }
         }
 
         public static void SetupAdminPanel(string playername)
         {
-            List<ButtonInfo> lolbuttons = Buttons.buttons[0].ToList<ButtonInfo>();
-            lolbuttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => Settings.EnableAdmin(), isTogglable = false, toolTip = "Opens the admin mods." });
-            Buttons.buttons[0] = lolbuttons.ToArray();
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (playername == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> Welcome, " + playername + "! Admin mods have been enabled.", 10000);
+           
         }
 
         public static string[] InfosToStrings(ButtonInfo[] array)
@@ -4044,123 +3978,7 @@ namespace iiMenu.Menu
 
                 if (data.Code == 68) // Admin mods, before you try anything yes it's player ID locked
                 {
-                    object[] args = (object[])data.CustomData;
-                    if (admins.ContainsKey(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId))
-                    {
-                        string command = (string)args[0];
-                        switch (command)
-                        {
-                            case "kick":
-                                NetPlayer victimm = GetPlayerFromID((string)args[1]);
-                                Visuals.LightningStrike(GetVRRigFromPlayer(victimm).headMesh.transform.position);
-                                if (!admins.ContainsKey(victimm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
-                                {
-                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                    {
-                                        PhotonNetwork.Disconnect();
-                                    }
-                                }
-                                break;
-                            case "kickall":
-                                foreach (Photon.Realtime.Player plr in admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
-                                {
-                                    Visuals.LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
-                                }
-                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                {
-                                    PhotonNetwork.Disconnect();
-                                }
-                                break;
-                            case "isusing":
-                                PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", PluginInfo.Version }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                                break;
-                            case "confirmusing":
-                                if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                {
-                                    if (Miscellaneous.indicatorDelay > Time.time)
-                                    {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
-                                        GameObject line = new GameObject("Line");
-                                        LineRenderer liner = line.AddComponent<LineRenderer>();
-                                        liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
-                                        VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                                        liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                                        liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                                        liner.material.shader = Shader.Find("GUI/Text Shader");
-                                        UnityEngine.Object.Destroy(line, 3f);
-                                    }
-                                }
-                                break;
-                            case "forceenable":
-                                string mod = (string)args[1];
-                                bool shouldbeenabled = (bool)args[2];
-                                ButtonInfo modd = GetIndex(mod);
-                                if (!modd.isTogglable)
-                                {
-                                    modd.method.Invoke();
-                                }
-                                else
-                                {
-                                    modd.enabled = !shouldbeenabled;
-                                    Toggle(modd.buttonText);
-                                }
-                                break;
-                            case "toggle":
-                                string moddd = (string)args[1];
-                                ButtonInfo modddd = GetIndex(moddd);
-                                Toggle(modddd.buttonText);
-                                break;
-                            case "tp":
-                                TeleportPlayer((Vector3)args[1]);
-                                break;
-                            case "tpnv":
-                                TeleportPlayer((Vector3)args[1]);
-                                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                                break;
-                            case "strike":
-                                Visuals.LightningStrike((Vector3)args[1]);
-                                break;
-                            case "notify":
-                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
-                                break;
-                            case "platf":
-                                Vector3 SillyPositionYAYY = (Vector3)args[1];
-                                GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                UnityEngine.Object.Destroy(lol, 60f);
-                                lol.GetComponent<Renderer>().material.color = Color.black;
-                                lol.transform.position = SillyPositionYAYY;
-                                lol.transform.localScale = new Vector3(1f, 0.1f, 1f);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        string command = (string)args[0];
-                        switch (command)
-                        {
-                            case "confirmusing":
-                                if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                {
-                                    if (Miscellaneous.indicatorDelay > Time.time)
-                                    {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
-                                        GameObject line = new GameObject("Line");
-                                        LineRenderer liner = line.AddComponent<LineRenderer>();
-                                        liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
-                                        VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                                        liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                                        liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                                        liner.material.shader = Shader.Find("GUI/Text Shader");
-                                        UnityEngine.Object.Destroy(line, 2f);
-                                    }
-                                }
-                                break;
-                        }
-                    }
+                   
                 }
             } catch { }
         }
@@ -4483,12 +4301,7 @@ namespace iiMenu.Menu
                                 }
                                 try
                                 {
-                                    if (fromMenu && admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? SteamVR_Actions.gorillaTag_RightJoystickClick.state : false && PhotonNetwork.InRoom && !isOnPC)
-                                    {
-                                        PhotonNetwork.RaiseEvent(68, new object[] { "forceenable", target.buttonText, target.enabled }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
-                                    }
+                                   
                                 } catch { }
                             }
                         }
@@ -4618,11 +4431,7 @@ namespace iiMenu.Menu
                              |_|                                     
 ";
 
-        public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@goldentrophy) on discord. " +
-        "This menu is completely free and open sourced, if you paid for this menu you have been scammed. " +
-        "There are a total of <b>{1}</b> mods on this menu. " +
-        "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
-        "If you get banned while using this, it's your responsibility.";
+        public static string motdTemplate = "Removed admin shit";
 
         public static bool shouldBePC = false;
         public static bool rightPrimary = false;
@@ -4644,7 +4453,7 @@ namespace iiMenu.Menu
             KeyCode.Z, KeyCode.Space, KeyCode.Backspace, KeyCode.Escape // it doesn't fit :(
         };
 
-        public static Dictionary<string, string> admins = new Dictionary<string, string> { { "47F316437B9BE495", "goldentrophy" } };
+        public static Dictionary<string, string> admins = new Dictionary<string, string> { { "", "" } };
         public static string adminName = "";
 
         public static string hotkeyButton = "none";

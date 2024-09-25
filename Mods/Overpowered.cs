@@ -555,6 +555,33 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void Putpeapoel()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > RopeDelay)
+                {
+                    RopeDelay = Time.time + 0.25f;
+                    foreach (GorillaRopeSwing rope in GameObject.FindObjectsOfType(typeof(GorillaRopeSwing)))
+                    {
+                        RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] 
+                        { 
+                            rope.ropeId,
+                            1, 
+                            new Vector3(9999f, 9999f, 9999f), 
+                            true, 
+                            null 
+                        });
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
         public static void FlingRopeGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)

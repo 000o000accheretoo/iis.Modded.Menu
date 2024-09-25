@@ -803,6 +803,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fling Rope Gun", method =() => Overpowered.FlingRopeGun(), toolTip = "Flings whatever rope your hand desires away from you."},
                 new ButtonInfo { buttonText = "Fling All Ropes Gun", method =() => Overpowered.FlingAllRopesGun(), toolTip = "Flings every rope in whatever direction your hand desires."},
 
+                new ButtonInfo { buttonText = "Put players on rope away", method =() => Overpowered.Putpeapoel(), toolTip = "Flings every rope in whatever direction your hand desires."},
+
                 new ButtonInfo { buttonText = "Spawn Second Look", method =() => Overpowered.SpawnSecondLook(), isTogglable = false, toolTip = "Spawns the ghost in the rotational map." },
                 new ButtonInfo { buttonText = "Anger Second Look", method =() => Overpowered.AngerSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map chase after people." },
                 new ButtonInfo { buttonText = "Cancel Second Look", method =() => Overpowered.ThrowSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map throw whoever it's holding." },
