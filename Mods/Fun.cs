@@ -6,9 +6,12 @@ using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Menu;
+using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Oculus.Platform;
+using OVR;
 using Photon.Pun;
+using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using POpusCodec.Enums;
 using System;
@@ -559,6 +562,54 @@ namespace iiMenu.Mods
             lastrhboop = isBoopRight;
         }
 
+        public static void MicrophoneFeedback()
+        {
+            if (!GorillaTagger.Instance.myRecorder.DebugEchoMode)
+            {
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+            }
+        }
+
+        public static void CopyVoiceGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    AudioClip clippy = ((Photon.Voice.Unity.Speaker)Traverse.Create(whoCopy.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
+                    if (GorillaTagger.Instance.myRecorder.AudioClip != clippy)
+                    {
+                        GorillaTagger.Instance.myRecorder.AudioClip = clippy;
+                    }
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                        GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
+                        GorillaTagger.Instance.myRecorder.AudioClip = ((Photon.Voice.Unity.Speaker)Traverse.Create(possibly.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
+                        GorillaTagger.Instance.myRecorder.RestartRecording(true);
+                        GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    Sound.FixMicrophone();
+                }
+            }
+        }
+
         /*
         public static void GorillaVoice()
         {
@@ -1082,7 +1133,7 @@ namespace iiMenu.Mods
 
         public static void LowQualityMicrophone()
         {
-            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
             mic.SamplingRate = SamplingRate.Sampling08000;
             //oldBitrate = mic.Bitrate;
             mic.Bitrate = 5;
@@ -1092,7 +1143,7 @@ namespace iiMenu.Mods
 
         public static void HighQualityMicrophone()
         {
-            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
             mic.SamplingRate = SamplingRate.Sampling16000;
             mic.Bitrate = 20000;
 
@@ -1101,7 +1152,7 @@ namespace iiMenu.Mods
 
         public static void LoudMicrophone()
         {
-            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
 
             if (!mic.gameObject.GetComponent<MicAmplifier>())
             {
@@ -1117,7 +1168,7 @@ namespace iiMenu.Mods
 
         public static void NotLoudMicrophone()
         {
-            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
 
             if (mic.gameObject.GetComponent<MicAmplifier>())
             {
