@@ -1467,38 +1467,49 @@ namespace iiMenu.Mods
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+
+            // Cache a single material for use on all ESP boxes
+            Material espMaterial = new Material(Shader.Find("GUI/Text Shader"));
+
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                box.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);  // Set a small thickness for the box
+                UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                box.GetComponent<Renderer>().material = espMaterial;
+
                 if (player == target)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                    // Set box position and orientation
                     box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                     box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                    // Apply color to material
                     box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, Time.deltaTime);
                 }
-                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
+                else if (sillyComputer.GetTargetOf(player).UserId == PhotonNetwork.LocalPlayer.UserId)
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                    // Set box position and orientation
                     box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                     box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                    // Apply color to material
                     box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, Time.deltaTime);
                 }
+
+                // Destroy the box after rendering this frame
+                UnityEngine.Object.Destroy(box, 0.1f);
             }
         }
+
 
         public static void CasualHollowBoxESP()
         {

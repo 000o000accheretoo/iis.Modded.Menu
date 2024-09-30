@@ -581,11 +581,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grab Trees <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.GetTrees(), method =() => Fun.GrabTree(), toolTip = "Grabs a tree when you hold <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Spaz All Moles", method =() => Fun.SpazMoleMachines(), toolTip = "Gives the moles a seizure."},
+                new ButtonInfo { buttonText = "break mole", method =() => Fun.MoleThing(), toolTip = "Gives the moles a seizure."},
+                new ButtonInfo { buttonText = "break mole2", method =() => Fun.MoleThing2(), toolTip = "Gives the moles a seizure."},
                 new ButtonInfo { buttonText = "Auto Start Moles", method =() => Fun.AutoStartMoles(), toolTip = "Automatically starts the mole games."},
                 new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoles(), toolTip = "Hits all of the moles automatically."},
                 new ButtonInfo { buttonText = "Auto Hit Hazards", method =() => Fun.AutoHitHazards(), toolTip = "Hits all of the hazards automatically."},
 
                 new ButtonInfo { buttonText = "Grab Bug <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBug(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "steal bug", method =() => Overpowered.stealbug(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Bat <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBat(), toolTip = "Forces the bat into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Beach Ball <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBeachBall(), toolTip = "Forces the beach ball into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Balloons <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBalloons(), toolTip = "Forces every single balloon cosmetic into your hand when holding <color=green>grip</color>." },
@@ -932,6 +935,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Experimental.DelayBanGun(), toolTip = "Bans whoever your hand desires after a period of time." },
                 new ButtonInfo { buttonText = "Delay Ban All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Experimental.DelayBanAll(), toolTip = "Bans everyone in the lobby after a period of time when holding <color=green>trigger</color>." },
+
+                //new ButtonInfo { buttonText = "lofasz", method =() => Overpowered.Entrance(), toolTip = "e" },
             },
 
             new ButtonInfo[] { // Safety (in settings) [28]

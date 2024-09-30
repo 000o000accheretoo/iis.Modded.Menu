@@ -1,4 +1,5 @@
-﻿using ExitGames.Client.Photon;
+﻿using BepInEx;
+using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
@@ -555,9 +556,78 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float d = 0f;
+        public static void stealbug()
+        {
+            if (ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.H))
+            {
+                if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().currentState == TransferrableObject.PositionState.InRightHand || GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().currentState == TransferrableObject.PositionState.InLeftHand)
+                {
+                    if (d < Time.time)
+                    {
+                        d = Time.time + 1f;
+
+                        for (int i = 0; i < 20; i++)
+                        {
+                            GameObject.Find("WorldShareableCosmetic").GetComponent<RequestableOwnershipGuard>().photonView.RPC("OnMasterClientAssistedTakeoverRequest", RpcTarget.Others, "");
+                        }
+                    }
+                }
+                else
+                {
+                    GameObject.Find("Floating Bug Holdable").transform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.position;
+                }
+            }
+        }
+
+        public static float d1 = 0f;
+        public static void stealbug1()
+        {
+            if (ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.H))
+            {
+                if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().currentState == TransferrableObject.PositionState.InRightHand || GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().currentState == TransferrableObject.PositionState.InLeftHand)
+                {
+                    if (d1 < Time.time)
+                    {
+                        d1 = Time.time + 1f;
+
+                        for (int i = 0; i < 20; i++)
+                        {
+                            GameObject.Find("WorldShareableCosmetic").GetComponent<RequestableOwnershipGuard>().photonView.RPC("OnMasterClientAssistedTakeoverRequest", RpcTarget.Others, "");
+                        }
+                    }
+                }
+                else
+                {
+                    GameObject.Find("Floating Bug Holdable").transform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.position;
+                }
+            }
+        }
+
+        public static void Entrance()
+        {
+            if (ControllerInputPoller.instance.rightGrab || Keyboard.current.kKey.isPressed)
+            {
+                GorillaTagger.Instance.myVRRig.SendRPC("RemoteEntranceDoorState", RpcTarget.Others, new object[]
+                {
+                    GhostLab.EntranceDoorsState.InnerDoorOpen
+                });
+                GorillaTagger.Instance.myVRRig.SendRPC("RemoteEntranceDoorState", RpcTarget.Others, new object[]
+                {
+                    GhostLab.EntranceDoorsState.OuterDoorOpen
+                });
+                GorillaTagger.Instance.myVRRig.SendRPC("RemoteEntranceDoorState", RpcTarget.Others, new object[]
+               {
+                    GhostLab.EntranceDoorsState.BothClosed
+               });
+                RPCProtection();
+                return;
+            }
+        }
+
         public static void Putpeapoel()
         {
-            if (rightTrigger > 0.5f)
+            if (rightGrab || Mouse.current.rightButton.isPressed)
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -570,9 +640,9 @@ namespace iiMenu.Mods
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] 
                         { 
-                            rope.ropeId,
+                            rope.ropeId, 
                             1, 
-                            new Vector3(9999f, 9999f, 9999f), 
+                            (new Vector3(-39.3966f, -233.6501f, -109.3214f) - rope.transform.position).normalized * int.MaxValue,
                             true, 
                             null 
                         });

@@ -19,6 +19,12 @@ namespace iiMenu
             Loading.AddComponent<iiMenu.Notifications.NotifiLib>();
             Loading.AddComponent<iiMenu.Classes.CoroutineManager>();
             UnityEngine.Object.DontDestroyOnLoad(Loading);
+
+            if (GameObject.Find("Miscellaneous Scripts/PrivateUIRoom/LegalAgreementCheck"))
+            {
+                GameObject.Find("Miscellaneous Scripts/PrivateUIRoom/LegalAgreementCheck").SetActive(false);
+                GameObject.Find("Miscellaneous Scripts/PrivateUIRoom/ReportOccluder").SetActive(false);
+            }
         }
     }
 }

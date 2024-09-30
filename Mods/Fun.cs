@@ -674,6 +674,57 @@ namespace iiMenu.Mods
             }
         }
 
+
+        public static bool wasdone = false;
+
+        public static void MoleThing()
+        {
+            if (ControllerInputPoller.instance.rightGrab || Keyboard.current.lKey.isPressed && !wasdone)
+            {
+                wasdone = true;
+                foreach (WhackAMole wa in GetWAMoles())
+                {
+                    wa.GetView.RPC("WhackAMoleButtonPressed", RpcTarget.All, new object[] { });
+                    int state = (int)Traverse.Create(wa).Field("currentState").GetValue();
+                    
+                    if (state == 1 || state == 2 || state == 3 || state == 4 || state == 5)
+                    {
+                        Traverse.Create(wa).Field("currentState").SetValue(0);
+                    }
+                }
+                RPCProtection();
+            }
+            else if (!ControllerInputPoller.instance.rightGrab)
+            {
+                wasdone = false;
+            }
+        }
+
+        public static bool wasdone2 = false;
+
+        public static void MoleThing2()
+        {
+            if (ControllerInputPoller.instance.rightGrab || Keyboard.current.lKey.isPressed && !wasdone)
+            {
+                wasdone2 = true;
+                foreach (WhackAMole wa in GetWAMoles())
+                {
+                    int state = (int)Traverse.Create(wa).Field("currentState").GetValue();
+
+                    if (state == 1 || state == 2 || state == 3 || state == 4 || state == 5)
+                    {
+                        Traverse.Create(wa).Field("currentState").SetValue(0);
+                    }
+                }
+                RPCProtection();
+            }
+            else if (!ControllerInputPoller.instance.rightGrab)
+            {
+                wasdone2 = false;
+            }
+        }
+
+
         public static void GetHoneyComb()
         {
             if (leftGrab)

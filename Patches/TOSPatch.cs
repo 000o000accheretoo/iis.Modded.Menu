@@ -14,7 +14,8 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                Traverse.Create(__instance).Field("buttonDown").SetValue(true);
+                GameObject.Find("Miscellaneous Scripts/PrivateUIRoom/LegalAgreementCheck").SetActive(false);
+                GameObject.Find("Miscellaneous Scripts/PrivateUIRoom/LegalAgreementCheck").SetActive(false);
             }
         }
     }
